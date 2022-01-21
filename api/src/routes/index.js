@@ -194,10 +194,8 @@ router.post('/activity', async (req,res) => {
         paises
     } = req.body
 
-    console.log(nombre + dificultad + duracion + temporada + paises);
-
+    //console.log(nombre + dificultad + duracion + temporada + paises);
     /*
-
     let activityCreated = await Activity.create({
          nombre,
          dificultad,
@@ -212,8 +210,8 @@ router.post('/activity', async (req,res) => {
     activityCreated.addCountry(countryDb)
     */
 
-    if (!temporada)
-        res.status(404).send('Temporada no cargada');
+    if (!nombre || !dificultad || !temporada || !duracion || paises.length == 0 )
+        res.status(404).send('Existen campos incompletos');
     else
         res.status(200).send('Actividad creada con exito');
 })
