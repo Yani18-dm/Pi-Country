@@ -1,0 +1,15 @@
+
+.rActivityCreate {
+    background-color: bisque;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: auto;
+    padding-top: 2px;
+    background-size: cover;    
+}
+
+.listaPaises { 
+    text-align: left;
+    padding-left: 44%;
+  }

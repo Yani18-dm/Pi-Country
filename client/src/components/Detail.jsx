@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { getDetail } from '../actions';
 import { useEffect } from 'react';
+import './Detail.css'
 
 export default function Detail(){
     const { id } = useParams();
@@ -16,7 +17,8 @@ export default function Detail(){
     const myCountry = useSelector((state) => state.detail)
 
     return (
-        <div>
+        <div className='rDetail'>
+            <div className='rCard'>
             <Link to= '/home'><button>Volver</button></Link>
             {
                 myCountry.length > 0 ?
@@ -42,6 +44,7 @@ export default function Detail(){
                 : 
                 <div>No trajo al pais</div>
             }
+            </div>
         </div>    
     );
 }

@@ -21,13 +21,6 @@
 
 .paginado a:hover:active {background-color: #df0a6d; border-radius: 5px;}
 
-.Card { background: burlywood; }
-
-.listaActividades { 
-  text-align: left;
-  padding-left: 44%;
-}
-
 .rPais {
   display: inline-block;
   float: center;

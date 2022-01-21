@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { getActivities, getCountries } from '../actions';
 import { postActivity } from '../actions';
-
+import './ActivityCreate.css'
 //crear un obj vacio
 //input es mi estado local 
 //Y sino hay nada en mi estado local, coloco string donde requiere un nombre y sino vuelvo preguntar
@@ -169,7 +169,7 @@ export default function ActivityCreate() {
     
     //creo el boton
     return(
-        <div key={"ActivityCreate"}>
+        <div className='rActivityCreate' key={"ActivityCreate"}>
             <Link to= '/home'><button>Volver</button></Link>
             <h1>Crea tu actividad</h1>
             <form onSubmit={(e)=>handleSubmit(e)}>
@@ -231,7 +231,7 @@ export default function ActivityCreate() {
                                 <option value= {c.nombre}>{c.nombre}</option>
                             ))}
                         </select>
-                        <ul><li>{input.paises.map(el => el + " ,")}</li></ul>
+                        <ul className='listaPaises'><li>{input.paises.map(el => el + " ,")}</li></ul>
                         {errors.paises && (
                             <p className='errors'>{errors.paises}</p>
                         )} 
