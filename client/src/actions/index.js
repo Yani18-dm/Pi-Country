@@ -55,6 +55,8 @@ export function getNombreCountries(nombre){
 }
 
 export function filterCountriesByContinente(payload){
+    //Resuelve sin el back
+    //Funcion en desuso
     console.log(payload)
     return {
         type: 'FILTER_BY_CONTINENTE',
@@ -63,7 +65,29 @@ export function filterCountriesByContinente(payload){
 
 }
 
+export function filterPaisesByBack(filter){
+    //FILTRA_POR_ACTIVIDAD_CONTINENTE_ORDENA_NOMBREPAIS_POBLACION_SEGUN_ASC_DESC
+    console.log(filter)
+
+    return async function (dispatch){
+        try {
+            console.log('http://localhost:3001/countriesFilter?filter' + filter);
+            var json = await axios.get ('http://localhost:3001/countriesFilter?filter=' + filter);
+            
+            //"FILTRA_POR_ACTIVIDAD_CONTINENTE_ORDENA_NOMBREPAIS_POBLACION_SEGUN_ASC_DESC"
+            return dispatch ({
+                type: "FILTRA_TODO" ,
+                payload: json.data
+            })
+        } catch (error) {
+            console.log(error)
+        }  
+    }
+}
+
 export function filterCountriesByActivity(payload){
+    //Resuelve sin el back
+    //Funcion en desuso
     console.log(payload)
     return {
         type: 'FILTER_BY_ACTIVIDAD',
@@ -73,6 +97,7 @@ export function filterCountriesByActivity(payload){
 }
 
 export function setOrderCountries(payload){
+    //Resuelve sin el back
     console.log(payload)
     return {
         type: 'ORDER_BY_NOMBRE_PAIS',
@@ -82,6 +107,7 @@ export function setOrderCountries(payload){
 }
 
 export function setOrderPoblacion(payload){
+    //Resuelve sin el back
     console.log(payload)
     return {
         type: 'ORDER_BY_POBLACION_PAIS',

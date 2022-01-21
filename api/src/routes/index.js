@@ -43,7 +43,7 @@ const getDbInfoActivities = async () => {
     return await Activity.findAll({
         include:{
             model: Country,
-            attributes: ['id','nombre','continente','bandera','capital','area'],
+            attributes: ['id','nombre','continente','bandera','capital','area','poblacion'],
             through: {
                 attributes: [],
             },
@@ -105,6 +105,81 @@ router.get('/countries', async(req,res) => {
 
 
 })
+
+router.get('/countriesFilter', async(req,res) => {
+    const filter = req.query.filter
+
+    let actividades = await getDbInfoActivities();
+    let paisesTodos = await getDbInfoCountries();
+
+    let filtros = []
+    filtros = filter.split('-')
+
+    //console.log(filter)
+    //console.log(filtros[0])
+
+    let continente = filtros[0] //Todos / Asia / Americas ...
+    let actividad = filtros[1]  //Todas / Cabalgata / Ciclismo ...
+    let orden = filtros[2]      //asc / des
+    let segun = filtros[3]      //alf / pob 
+    let porNombrePais = filtros[4] //En blanco == '' --> No filtrar / Ej: arg --> filtra por '%arg%'
+
+    //Inicializo con todos los paises
+    let paisesFiltrados = paisesTodos
+
+    if(actividad!='Todas')
+        paisesFiltrados = actividades.filter(el => el.nombre === actividad)[0].countries
+    
+    //Si elige un continente lo filtro
+    if(continente!='Todos')
+        paisesFiltrados = await paisesFiltrados.filter(el => el.continente.toLowerCase().includes(continente.toLowerCase()));
+
+    //Si filtro por nombre de pais
+    if(porNombrePais!='')
+        paisesFiltrados = await paisesFiltrados.filter(el => el.nombre.toLowerCase().includes(porNombrePais.toLowerCase()));
+
+    paisesFiltrados.sort(function (a,b){
+        //alf --> Orden por nombre del pais
+        if (segun == 'alf'){
+            if (a.nombre > b.nombre){
+                if(orden == 'asc')
+                    return 1;
+                else
+                    return -1;
+            }
+            if (b.nombre > a.nombre){
+                if(orden == 'asc')
+                    return -1;
+                else    
+                    return 1;
+            }
+            return 0;
+        } else { //pob --> Orden por cantidad de poblacion
+            if (a.poblacion > b.poblacion){
+                if(orden == 'asc')
+                    return 1;
+                else
+                    return -1;
+            }
+            if (b.poblacion > a.poblacion){
+                if(orden == 'asc')
+                    return -1;
+                else    
+                    return 1;
+            }
+            return 0;
+        }
+    })
+    
+    console.log(filtros[4])
+    console.log(paisesFiltrados.length)
+
+    //paisesFiltrados.length ?
+    res.status(200).send(paisesFiltrados)// :
+    //res.status(404).send('No existe ningun país para el continente ' + continente);
+
+})
+
 
 router.get('/activities', async(req,res) => {
     const name = req.query.name
@@ -195,7 +270,7 @@ router.post('/activity', async (req,res) => {
     } = req.body
 
     //console.log(nombre + dificultad + duracion + temporada + paises);
-    /*
+    
     let activityCreated = await Activity.create({
          nombre,
          dificultad,
@@ -208,7 +283,7 @@ router.post('/activity', async (req,res) => {
     })
     
     activityCreated.addCountry(countryDb)
-    */
+    
 
     if (!nombre || !dificultad || !temporada || !duracion || paises.length == 0 )
         res.status(404).send('Existen campos incompletos');

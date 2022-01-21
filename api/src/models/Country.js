@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       poblacion:{
-        type: DataTypes.BIGINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       area:{

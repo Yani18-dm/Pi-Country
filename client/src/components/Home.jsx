@@ -5,11 +5,10 @@ import {useState, useEffect} from 'react';
 //importo los hooks de react-redux(previamente lo instalo npm i react-redux)
 import {useDispatch, useSelector} from 'react-redux';
 //importo las actions que me interesa usar en este componente
-import { getActivities, getCountries, filterCountriesByContinente, filterCountriesByActivity, setOrderCountries, setOrderPoblacion } from '../actions';
+import { getActivities, getCountries, setOrderCountries, setOrderPoblacion, filterPaisesByBack } from '../actions';
 //importo los componentes que voy a usar
 import Card from './Card';
 import Paginado from './Paginado';
-import SearchBar from './SearchBar';
 
 import './Home.css'
 
@@ -32,9 +31,10 @@ export default function Home () {
     const [segun, setSegun] = useState('alf')
     const [continente, setContinente] = useState('Todos')
     const [actividad, setActividad] = useState('Todas')
+    const [nombrePais, setNombrePais] = useState('')
 
     const [paginaActual, setPaginaActual] = useState(1)
-    const [cantidadPaisesPorPagina, setCantidadPaisesPorPagina] = useState(10)
+    const [cantidadPaisesPorPagina] = useState(10)
     const indiceMaximoDeLaPagina = paginaActual * cantidadPaisesPorPagina // 
     const indiceDelPrimerPais = indiceMaximoDeLaPagina - cantidadPaisesPorPagina 
     const paisesPaginaActual = allCountries.slice(indiceDelPrimerPais, indiceMaximoDeLaPagina )
@@ -49,8 +49,9 @@ export default function Home () {
 
     function handleClick_Actividades(e){
         e.preventDefault();
-        alert(continente)
-        document.getElementById('txtNombre').value = '';
+        //alert(continente)
+        setNombrePais('')
+        //document.getElementById('txtNombre').value = '';
         dispatch(getActivities());
     }
 
@@ -58,86 +59,106 @@ export default function Home () {
         e.preventDefault();
         let filtroCombinado = ''
 
-        document.getElementById('txtNombre').value = '';
+        //document.getElementById('txtNombre').value = '';
         
         setActividad(e.target.value)
-        filtroCombinado = continente + '-' + e.target.value + '-' + orden + '-' + segun
+        filtroCombinado = continente + '-' + e.target.value + '-' + orden + '-' + segun + '-' + nombrePais
         
-        alert(filtroCombinado)
-
+        //alert(filtroCombinado)
         //dispatch(filterCountriesByActivity(e.target.value+'-'+orden));
+
+        dispatch(filterPaisesByBack(filtroCombinado))
     }
 
     function handleClick_Paises(e){
         e.preventDefault();
-        document.getElementById('txtNombre').value = '';
+        setNombrePais('')
+        //document.getElementById('txtNombre').value = '';
         dispatch(getCountries());
+        setPaginaActual(1)
     }
 
     function handleFilterContinente(e){
         e.preventDefault();
         let filtroCombinado = ''
 
-        document.getElementById('txtNombre').value = '';
+        //document.getElementById('txtNombre').value = '';
         
         setContinente(e.target.value)
-        filtroCombinado = e.target.value + '-' + actividad + '-' + orden + '-' + segun
+        filtroCombinado = e.target.value + '-' + actividad + '-' + orden + '-' + segun + '-' + nombrePais
         
-        alert(filtroCombinado)
-
+        //alert(filtroCombinado)
         //dispatch(filterCountriesByContinente(e.target.value+'-'+orden));
+
+        dispatch(filterPaisesByBack(filtroCombinado))
     }
 
     function handleSetOrder(e){
         e.preventDefault();
-
-        let filtroCombinado = ''
-
-        document.getElementById('txtNombre').value = '';
         
-        setOrden(e.target.value)
-        filtroCombinado = continente + '-' + actividad + '-' + e.target.value + '-' + segun
+        //No necesita el filtro combinado porque lo resuelvo en el FrontEnd
+        //filtroCombinado = continente + '-' + actividad + '-' + e.target.value + '-' + segun + '-' + nombrePais
         
-        alert(filtroCombinado)
+        //alert(filtroCombinado)
 
         if(segun === 'alf'){
-            //dispatch(setOrderCountries(orden));
+            dispatch(setOrderCountries(e.target.value));
         } else {
-            //dispatch(setOrderPoblacion(orden));
+            dispatch(setOrderPoblacion(e.target.value));
         }
+
+        setOrden(e.target.value)
 
         setPaginaActual(1);
 
+    }
+    //A medida que escribe el usuario en el txtSearchBar
+    function handleInputCountries(e){
+        setNombrePais(e.target.value)
+        console.log(e.target.value)
+        console.log(nombrePais)
+    }
+
+    //txtSearchBar
+    function handleSubmit(e){
+        e.preventDefault();
+
+        let filtroCombinado = ''
+        
+        setNombrePais(e.target.value)
+        console.log('Submit ' + e.target.value)
+        console.log(nombrePais)
+
+        filtroCombinado = continente + '-' + actividad + '-' + orden + '-' + segun + '-' + nombrePais
+
+        dispatch(filterPaisesByBack(filtroCombinado))
     }
 
     function handleClick_SetOrderSegun(e){
         e.preventDefault();
 
-        let filtroCombinado = ''
-        //document.getElementById('txtNombre').value = '';
+        //let filtroCombinado = ''
         
         setSegun(e.target.value)
-        filtroCombinado = continente + '-' + actividad + '-' + orden + '-' + e.target.value
+        //No necesita el filtro combinado porque lo resuelvo en el FrontEnd
+        //filtroCombinado = continente + '-' + actividad + '-' + orden + '-' + e.target.value + '-' + nombrePais
         
-        alert(filtroCombinado)
+        //alert(filtroCombinado)
+        //alert("Ordena " + (e.target.value === 'alf' ? "alfabeticamente" : "segun poblacion"));
+
+        if(e.target.value === 'alf'){
+            dispatch(setOrderCountries(orden));
+        } else { //'pob' para ordenar segun la cantidad de poblacion
+            dispatch(setOrderPoblacion(orden));
+        }
 
         setPaginaActual(1);
-
-        //alert("Ordena " + (e.target.value === 'alf' ? "alfabeticamente" : "segun poblacion"));
-        if(e.target.value === 'alf'){
-            //dispatch(setOrderCountries(orden));
-        } else {
-            //dispatch(setOrderPoblacion(orden));
-        }
 
     }
 
     function handle_Click_CrearActividad(){
         navigate("../activity");
     }
-
-
-
 
     //Es necesario crear una funcion para la accion del boton (que carga las actividades)
     return (
@@ -170,7 +191,6 @@ export default function Home () {
                     })                       
                 }
                 </select>
-
                 
                 <button onClick={e=> {handle_Click_CrearActividad(e)}}>
                     Crear Actividad
@@ -195,7 +215,11 @@ export default function Home () {
                 paginado={paginado}
                 />
 
-                <SearchBar/>
+                <div>
+                    <input id='txtSearchBar' value={nombrePais} type="text" placeholder='Buscar' onChange = {(e) => handleInputCountries(e)}/>
+                    <button type='submit' onClick={(e) => handleSubmit(e)}>Buscar</button>
+                </div>
+
                 <br></br>
                 {
                     paisesParteSuperior?.map((c) => {
@@ -208,7 +232,7 @@ export default function Home () {
                                 </div>
                             </Fragment>
                         )
-                    })                       
+                    })
                 }
                 <br></br>
                 {
@@ -225,6 +249,11 @@ export default function Home () {
                         )
                     })                       
                 }
+                {  paisesParteSuperior.length === 0 && (
+                    <p className='errors'>No existen países con el filtro aplicado</p>
+                   )
+                }
+
         
             </div>
             <button onClick={e=> {handleClick_Paises(e)}}>

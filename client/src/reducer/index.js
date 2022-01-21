@@ -1,8 +1,7 @@
 const initialState = {
     countries : [],
     allCountries : [],
-    detail : [],
-    postmessages : []
+    detail : []
 }
 
 function rootReducer (state= initialState, action){
@@ -13,11 +12,7 @@ function rootReducer (state= initialState, action){
                 ...state,
                 activities: action.payload
             } 
-        case "POST_ACTIVITY":
-            return {
-                ...state,
-                postMessages: action.payload
-            }
+
         case 'GET_COUNTRIES':
             //va  devolver un estado
             const countriesOrdenados =  action.payload
@@ -139,7 +134,7 @@ function rootReducer (state= initialState, action){
                     }
                     return 0;
                 }) :
-                state.countries.sort(function (a,b ){
+                state.countries.sort(function (a,b){
                     if (a.nombre > b.nombre){
                         return -1;
                     }
@@ -160,19 +155,19 @@ function rootReducer (state= initialState, action){
                 let sortedArrPob = action.payload === 'asc' ?
                 state.countries.sort(function (a,b){
                     if (a.poblacion > b.poblacion){
-                        return -1;
+                        return 1;
                     }
                     if (b.poblacion > a.poblacion){
-                        return 1;
+                        return -1;
                     }
                     return 0;
                 }) :
-                state.countries.sort(function (a,b ){
+                state.countries.sort(function (a,b){
                     if (a.poblacion > b.poblacion){
-                        return 1;
+                        return -1;
                     }
                     if (b.poblacion > a.poblacion){
-                        return -1;
+                        return 1;
                     }
                     return 0;
                 })
@@ -188,6 +183,13 @@ function rootReducer (state= initialState, action){
                 ...state,
                 detail: action.payload
             }
+
+        case 'FILTRA_TODO': 
+            return{
+                ...state,
+                countries: action.payload
+            }
+            
         default:
             return state;
     }
