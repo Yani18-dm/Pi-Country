@@ -11,7 +11,7 @@ import { postActivity } from '../actions';
 //Y sino hay nada en mi estado local, coloco string donde requiere un nombre y sino vuelvo preguntar
 
 function validate(input) {
-    let errors = {};
+    let errors = {}; // deja el campo vacio
     console.log(!input.nombre?'No completo el nombre':input.nombre)
     console.log(!input.temporada? 'No completo temporada':input.temporada)
 
@@ -27,10 +27,11 @@ function validate(input) {
     if (!input.duracion) {
         errors.duracion = 'Duracion debe ser completado';
     }
-    if (input.paises.length == 0) {
+    if(input.paises.length==0){
         errors.paises = 'Paises debe ser completado';
-    }           
-    console.log('Asi sale de validar: ' + errors)
+    }         
+
+    //console.log('Asi sale de validar: ' + errors)
     return errors;
 };
 
@@ -38,6 +39,7 @@ export default function ActivityCreate() {
     const dispatch = useDispatch();
     let navigate = useNavigate();
     const countries = useSelector((state) => state.countries);
+    
     const [errors, setErrors] = useState({});
 
 
@@ -74,14 +76,14 @@ export default function ActivityCreate() {
         setErrors(validate({
             ...input,
             [e.target.name] : e.target.value
-        }));
-
+        }, e.target.name));
+        /*
         console.log('Asi llega a handleChange: ' + 
                        (!errors.nombre?'Escribio su nombre':errors.nombre) + 
                        (!errors.temporada?'Bien, seleccionaste temporada':errors.temporada) +
                        (!input.nombre?'':input.nombre) + 
                        (!input.temporada?'':input.temporada))
-
+        */
     }
 
 
@@ -90,6 +92,10 @@ export default function ActivityCreate() {
             ...input,
             paises : [...input.paises, e.target.value]
         })
+        setErrors(validate({
+            ...input,
+            [e.target.name] : e.target.value
+        }));
     }
 
     //necesito despachar y renderizar el dispatch de mi accion: paises
@@ -98,42 +104,72 @@ export default function ActivityCreate() {
     }, []);
 
     function handleSubmit(e){
-        const errores = []
-
         e.preventDefault();
-        console.log(input)
-        console.log(errors)
-        console.log(!errors.nombre?input.nombre:errors.nombre)
 
-        if(errors.nombre){
-            errores.push(errors.nombre)
+        const reporteErrores = []
+
+        if(!input.nombre){
+            if(errors.nombre)
+                reporteErrores.push(errors.nombre)
+            else
+                reporteErrores.push("Debe completar la nombre")
         }
-        if(errors.temporada){
-            errores.push(errors.temporada)
-        }        
-        console.log(errores);
+        if(!input.temporada){
+            if(errors.temporada)
+                reporteErrores.push(errors.temporada)
+            else
+                reporteErrores.push("Debe completar la temporada")
+        }  
+        if(!input.dificultad){
+            if(errors.dificultad)
+                reporteErrores.push(errors.dificultad)
+            else
+                reporteErrores.push("Debe completar la dificultad")
+        }  
+        if(!input.duracion){
+            if(errors.duracion)
+                reporteErrores.push(errors.duracion)
+            else
+                reporteErrores.push("Debe completar la duracion")           
+        } 
+        if(input.paises.length==0){
+            if(errors.paises)
+                reporteErrores.push(errors.paises)
+            else
+                reporteErrores.push("Debe completar los paises")
+            
+        } 
 
-       
-        //if(!errors.nombre)
+        let mensajeError = ''
+        let i = 0
+    
+        while (i < reporteErrores.length) {
+            //console.log('Paso por el while')
+            mensajeError += "\n" + reporteErrores[i];
+            i++;
+        }
 
+        if(reporteErrores.length > 0)
+            alert(mensajeError);
+        else {
+            dispatch(postActivity(input));
 
-        //dispatch(postActivity(input));
-
-        setInput({
-            nombre:"",
-            dificultad:"",
-            duracion:"",
-            temporada:"",
-            paises:[]
-        })
-        //navigate("../home");
+            setInput({
+                nombre:"",
+                dificultad:"",
+                duracion:"",
+                temporada:"",
+                paises:[]
+            })
+            
+            navigate("../home");
+        }
 
     }
     
-
     //creo el boton
     return(
-        <div>
+        <div key={"ActivityCreate"}>
             <Link to= '/home'><button>Volver</button></Link>
             <h1>Crea tu actividad</h1>
             <form onSubmit={(e)=>handleSubmit(e)}>
@@ -152,6 +188,7 @@ export default function ActivityCreate() {
                         <br></br>
                         <label>Dificultad</label>
                         <select name = "dificultad" onChange={handleChange}>
+                            <option value= 'Seleccionar'>Seleccionar</option>
                             <option value= '1'>Muy baja</option>
                             <option value= '2'>Baja</option>
                             <option value= '3'>Media</option>
@@ -175,6 +212,7 @@ export default function ActivityCreate() {
                         <br></br>
                         <label>Temporada</label>
                         <select name="temporada" onChange={handleChange}>
+                            <option value= 'Seleccionar'>Seleccionar</option>
                             <option value= 'Otoño'>Otoño</option>
                             <option value= 'Invierno'>Invierno</option>
                             <option value= 'Primavera'>Primavera</option>
@@ -188,6 +226,7 @@ export default function ActivityCreate() {
                         <br></br>
                         <label>Paises</label>
                         <select name="paises" onChange={handleSelect}>
+                            <option value= 'Seleccionar'>Seleccionar</option>
                             {countries.map((c) => (
                                 <option value= {c.nombre}>{c.nombre}</option>
                             ))}
