@@ -110,19 +110,26 @@ export default function Home () {
 
     }
 
-    function handleSetOrderPoblacion(e){
+    function handleClick_SetOrderSegun(e){
         e.preventDefault();
-        console.log(orden)
-        console.log(orden)
+
+        let filtroCombinado = ''
+        //document.getElementById('txtNombre').value = '';
+        
+        setSegun(e.target.value)
+        filtroCombinado = continente + '-' + actividad + '-' + orden + '-' + e.target.value
+        
+        alert(filtroCombinado)
+
+        setPaginaActual(1);
+
         //alert("Ordena " + (e.target.value === 'alf' ? "alfabeticamente" : "segun poblacion"));
         if(e.target.value === 'alf'){
-            dispatch(setOrderCountries(orden));
+            //dispatch(setOrderCountries(orden));
         } else {
-            dispatch(setOrderPoblacion(orden));
+            //dispatch(setOrderPoblacion(orden));
         }
-        setPaginaActual(1);
-        setOrden(`Ordenado ${e.target.value}`)
-        setSegun(e.target.value)
+
     }
 
     function handle_Click_CrearActividad(){
@@ -178,7 +185,7 @@ export default function Home () {
                     <option value= 'asc'>Ascendente </option>
                     <option value= 'des'>Descendente </option>
                 </select>
-                <select onChange={e => handleSetOrderPoblacion(e)}>
+                <select onChange={e => handleClick_SetOrderSegun(e)}>
                     <option value="alf" selected>alfabeticamente</option>
                     <option value="pob">según población</option>
                 </select>
