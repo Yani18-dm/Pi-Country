@@ -68,6 +68,8 @@ export default function Home () {
         //dispatch(filterCountriesByActivity(e.target.value+'-'+orden));
 
         dispatch(filterPaisesByBack(filtroCombinado))
+
+        setPaginaActual(1);
     }
 
     function handleClick_Paises(e){
@@ -91,6 +93,8 @@ export default function Home () {
         //dispatch(filterCountriesByContinente(e.target.value+'-'+orden));
 
         dispatch(filterPaisesByBack(filtroCombinado))
+
+        setPaginaActual(1);
     }
 
     function handleSetOrder(e){
@@ -132,6 +136,8 @@ export default function Home () {
         filtroCombinado = continente + '-' + actividad + '-' + orden + '-' + segun + '-' + nombrePais
 
         dispatch(filterPaisesByBack(filtroCombinado))
+
+        setPaginaActual(1);
     }
 
     function handleClick_SetOrderSegun(e){

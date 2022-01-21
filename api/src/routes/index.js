@@ -261,6 +261,9 @@ router.post('/country', async (req,res) => {
 */
 
 router.post('/activity', async (req,res) => {
+
+    let actividades = await getDbInfoActivities();
+
     let {
         nombre,
         dificultad,
@@ -269,26 +272,37 @@ router.post('/activity', async (req,res) => {
         paises
     } = req.body
 
-    //console.log(nombre + dificultad + duracion + temporada + paises);
     
-    let activityCreated = await Activity.create({
-         nombre,
-         dificultad,
-         duracion,
-         temporada
-    })
+    //Verifico si existe una actividad con el mismo nombre
+    if(nombre)
+        actividades = actividades.filter(el => el.nombre.toLowerCase() === nombre.toLowerCase())
 
-    let countryDb = await Country.findAll({
-        where: { nombre : paises }
-    })
-    
-    activityCreated.addCountry(countryDb)
-    
+    //Es una nueva actividad
+    if(actividades.length === 0){
 
-    if (!nombre || !dificultad || !temporada || !duracion || paises.length == 0 )
+        if (!nombre || !dificultad || !temporada || !duracion || paises.length == 0 )
+           res.status(404).send('Existen campos incompletos');
+        else {
+            
+            let activityCreated = await Activity.create({
+                nombre,
+                dificultad,
+                duracion,
+                temporada
+            })
+       
+            let countryDb = await Country.findAll({
+               where: { nombre : paises }
+            })
+           
+            activityCreated.addCountry(countryDb)
+
+            res.status(200).send('Actividad creada con exito');
+        }
+    } else {
         res.status(404).send('Existen campos incompletos');
-    else
-        res.status(200).send('Actividad creada con exito');
+    }
+    
 })
 
 module.exports = router;
